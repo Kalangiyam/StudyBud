@@ -1,0 +1,12 @@
+<nav>
+    <a href="/"><h1>LOGO</h1></a>
+    <form action="{% url 'home' %}">
+        <input type="text" name="q" placeholder="Searce Rooms...">
+    </form>
+    {% if request.user.is_authenticated %}
+        <a href="{% url 'logout' %}">Logout</a>
+    {% else %}
+        <a href="{% url 'login' %}">Login</a>
+    {% endif %}
+    <hr>
+</nav>
