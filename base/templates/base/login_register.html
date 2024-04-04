@@ -9,8 +9,8 @@
         <input type="text" name="username" placeholder="Username">
         <input type="password" name="password" placeholder="Password">
         <input type="submit" value="Login" id="">
-        <p>You dont have account </p>
-        <a href="{% url 'register' %}">Register</a>
+        <p>havent signed up yet? </p>
+        <a href="{% url 'register' %}">Sing up</a>
     </form>
 </div>
 {% else %}
@@ -18,8 +18,9 @@
     <h3>REGISTER</h3>
     <form action="" method="POST">
         {% csrf_token %}
+        {{form.as_p}}
         <input type="submit" value="Register" id="">
-        <p>You alredy register</p>
+        <p>You alredy signed up</p>
         <a href="{% url 'login' %}">Login</a>        
     </form>
 </div>
