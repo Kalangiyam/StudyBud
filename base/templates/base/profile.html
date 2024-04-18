@@ -1,24 +1,59 @@
 {% extends 'main.html' %}
 
 {% block content %}
-<style>
-    .profile-container{
-        display: grid;
-        grid-template-columns: 1fr 3fr 1fr;
-    }
-</style>
-<h2>{{user}}</h2>
-<div class="profile-container">
-    <div>
+
+<main class="profile-page layout layout--3" style="margin-bottom: 5rem;">
+    <div class="container">
+      <!-- Topics Start -->
+      <div class="topics">
         {% include 'base/topics_component.html' %}
-    </div>
+      </div>
+      <!-- Topics End -->
 
-    <div>
-        {% include 'base/feed_component.html' %}
-    </div>
+      <!-- Room List Start -->
+      <div class="roomList">
+        <div class="profile">
+          <div class="profile__avatar">
+            <div class="avatar avatar--large active">
+              <img src="https://randomuser.me/api/portraits/men/11.jpg" />
+            </div>
+          </div>
+          <div class="profile__info">
+            <h3>{{puser}}</h3>
+            <p>@{{puser}}</p>
+            {% if request.user == user %}
+              <a href="{% url 'base:update-profile' %}" class="btn btn--main btn--pill">Edit Profile</a>
+            {% endif %}
+          </div>
+          <div class="profile__about">
+            <h3>About</h3>
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur illo tenetur
+              facilis sunt nemo debitis quisquam hic atque aut? Ducimus alias placeat optio
+              accusamus repudiandae quis ab ex exercitationem rem?
+            </p>
+          </div>
+        </div>
 
-    <div>
-        {% include 'base/activite_component.html' %}
+        <div class="roomList__header">
+          <div>
+            <h2>Study Rooms Hosted by {{user}}</a>
+            </h2>
+          </div>
+        </div>
+        
+       {% include 'base/feed_component.html' %}
+        
+       <!-- {% include 'base/paginator.html' %} -->
+      </div>
+      
+      <!-- Room List End -->
+
+      <!-- Activities Start -->
+      <div class="activities">
+        {% include 'base/activity_component.html' %}
+      </div>
+      <!-- Activities End -->
     </div>
-</div>
+  </main>
 {% endblock content %}
