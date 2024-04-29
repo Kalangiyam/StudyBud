@@ -3,7 +3,7 @@
 {% block content %}
   <main class="create-room layout">
     <div class="container">
-      <div class="layout__box">
+      <div class="layout" style="width: 50%; background-color: var(--color-dark); margin-bottom: 2%; margin: 2% 25% 2% 25%;">
         <div class="layout__boxHeader">
           <div class="layout__boxTitle">
             <a href="{{request.META.HTTP_REFERER}}">
@@ -39,7 +39,7 @@
 
 
             <div class="form__group">
-              <label for="room_about">About</label>
+              <label for="room_about">Room Description</label>
               <textarea name="description" id="room_about" placeholder="Write about your study group..."></textarea>
             </div>
             <div class="form__action">

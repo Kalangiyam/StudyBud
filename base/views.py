@@ -2,20 +2,11 @@ from django.shortcuts import render,redirect
 from django.contrib import messages
 from django.http import HttpResponse
 from django.contrib.auth import authenticate,login,logout
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.contrib.auth.models import User
 from django.db.models import Q
-from .models import Room,Topic,Message
-from .forms import RoomForm, UserForm
-
-# Create your views here.
-# rooms = [
-#     {'id':1,'name':"Let's learn python!"},
-#     {'id':2,'name':"Let's learn flask!"},
-#     {'id':3,'name':"Let's learn django!"},
-# ]
+from .models import Room,Topic,Message,User
+from .forms import RoomForm, UserForm,MyUserCreationForm
 
 def loginPage(request):
     page = 'login'
@@ -23,11 +14,11 @@ def loginPage(request):
         return redirect('base:home')
     
     if request.method == 'POST':
-        username = request.POST.get('username')
+        username = request.POST.get('email')
         password = request.POST.get('password')
         
         try:
-            user = User.objects.get(username=username)           
+            user = User.objects.get(email=username)           
         except:
             messages.error(request,'User dose not exist')
             
@@ -46,35 +37,36 @@ def logoutPage(request):
     return redirect('base:home')
 
 def registerPage(request):
-    form = UserCreationForm()
+    form = MyUserCreationForm()
+
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = MyUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)           
-            user.username=user.username.lower()
+            user = form.save(commit=False)
+            user.username = user.username.lower()
             user.save()
-            login(request,user)
+            login(request, user)
             return redirect('base:home')
-    context = {'form':form}
-    return render(request,'base/login_register.html',context)
+        else:
+            messages.error(request, 'An error occurred during registration')
+
+    return render(request, 'base/login_register.html', {'form': form})
 
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
     rooms = Room.objects.filter(
         Q(topic__name__icontains=q) |
         Q(name__icontains=q) |
-        Q(host__username=q)
-        
+        Q(host__username=q)        
     )
     topics = Topic.objects.all()    
     room_messages = Message.objects.filter(Q(room__topic__name__icontains=q)|Q(room__host__username=q))[:5]
-        
+
     rooms_count = rooms.count()
 
     paginator = Paginator(rooms,5)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
-
   
     context={'page_obj':page_obj,'topics':topics,'rooms_count':rooms_count,
                 'room_messages':room_messages,'is_paginated': True if paginator.num_pages > 1 else False}
@@ -107,13 +99,10 @@ def userProfile(request,pk):
     paginator = Paginator(rooms,3)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number) 
-
  
     context= {'page_obj':page_obj,'room_messages':room_messages,
               'topics':topics,'puser':p_user,'is_paginated': True if paginator.num_pages > 1 else False}
-    return render(request,'base/profile.html',context)
-
-    
+    return render(request,'base/profile.html',context)    
     
 @login_required(login_url='base:login')
 def updateProfile(request):
@@ -210,8 +199,7 @@ def activitiesPage(request):
     room_messages = Message.objects.filter(Q(room__topic__name__icontains=q) |
                                            Q(room__name__icontains=q) |
                                            Q(user__username__icontains=q)
-                                           )
-    paginator = Paginator(room_messages,5)
+                                           )  
 
     context={'room_messages':room_messages}
     return render(request,'base/activity.html',context)
